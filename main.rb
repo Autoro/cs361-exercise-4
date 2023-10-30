@@ -57,11 +57,23 @@ new_state.do_work
 
 require 'candy_service'
 
-machine = CandyMachine.new
-machine.prepare
+class CandyMachineAdapter
+  def initialize
+    @machine = CandyMachine.new
+    @machine.prepare
+  end
 
-if machine.ready?
-  machine.make!
-else
+  def make
+    raise "Candy machine not ready" unless @machine.ready?
+
+    @machine.make!
+  end
+end
+
+machine = CandyMachineAdapter.new
+
+begin
+  machine.make
+rescue => exception
   puts "sadness"
 end
